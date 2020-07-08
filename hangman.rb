@@ -1,3 +1,4 @@
+FNAME = 'data'
 $word_list = File.readlines "5desk.txt"
 $word = $word_list.sample.downcase.chomp('')
 $win = false
@@ -104,6 +105,13 @@ class Game
         r = Rules.new
         p $word
         while !$win do
+            print("Would you like to save or load your game?(save/load/n)\n")
+            u_input = gets.chomp
+            if u_input == "save"
+                save()
+            elsif u_input == "load"
+                load_game()
+            end
             if $display_arr.length != $word.length
                 while $display_arr.length < $word.length
                     $display_arr.push("_ ")
@@ -134,10 +142,17 @@ class Game
         end
     end
     def save()
-
+        game_data = {"word" => $word, "win" => $win, "display" => $display_arr,
+        "wrong" => $wrong, "wrong_char" => $wrong_char}
+        File.open(FNAME, 'wb') {|f| f.write(Marshal.dump(game_data))}
     end
     def load_game()
-
+        load_game = Marshal.load(File.binread(FNAME))
+        $word = load_game["word"]
+        $win = load_game["win"]
+        $display_arr = load_game["display"]
+        $wrong = load_game["wrong"]
+        $wrong_char = load_game["wrong_char"]
     end
 end
 game = Game.new
